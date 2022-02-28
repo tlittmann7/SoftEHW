@@ -7,7 +7,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import getUsers from '../services/backendservice.js';
+import {getUsers, deleteUser} from '../services/backendservice.js';
+// import deleteUser from '../services/backendservice.js';
+import Button from '@mui/material/Button';
 
 export default class DataTable extends React.Component {
 
@@ -32,6 +34,7 @@ export default class DataTable extends React.Component {
                 <TableCell>Name</TableCell>
                 <TableCell align="right">ID</TableCell>
                 <TableCell align="right">Points</TableCell>
+                <TableCell align="right">Functions</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -45,6 +48,18 @@ export default class DataTable extends React.Component {
                     </TableCell>
                     <TableCell align="right">{row.Id}</TableCell>
                     <TableCell align="right">{row.Points}</TableCell>
+                    <TableCell align="right">
+                        <Button variant="text" 
+                        onClick={() => { deleteUser(row.Id).then(response => {
+                            this.setState(prevState => {
+                                let prevIDs = prevState.rows.filter(entry => 
+                                    entry.Id != response.deletedID);
+                                console.log(prevIDs);
+                                return {'rows': prevIDs}});
+                        }) }}>
+                            Delete
+                            </Button>
+                    </TableCell>
                 </TableRow>
                 ))}
             </TableBody>

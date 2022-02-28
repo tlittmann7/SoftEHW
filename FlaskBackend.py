@@ -37,9 +37,29 @@ def getAll():
     dataCursor.execute('SELECT * FROM userData')
     return [dict(row) for row in dataCursor.fetchall()]
 
+# tries to delete a data entry, throws an exception of failure
+def deleteUser(userID):
+    try:
+        dataConnect = get_db()
+        dataCursor = dataConnect.cursor()
+        dataCursor.execute("DELETE FROM userData WHERE Id=?", (userID,))
+        dataConnect.commit()
+        return {"deletedID": userID}
+    except Exception as e:
+        dataConnect.rollback()
+        return {"Error": e}
+
+
+    
+
+
 
 # Flask Start
 
 @app.route("/users")
 def getAllUsers():
     return {"users":getAll()}
+
+@app.route("/users/<userID>", methods=["DELETE"])
+def callDeleteUser(userID):
+    return deleteUser(userID)

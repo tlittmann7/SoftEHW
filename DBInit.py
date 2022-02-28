@@ -3,6 +3,8 @@ import sqlite3
 connection = sqlite3.connect('myData.db')
 cursor = connection.cursor()
 
+cursor.execute('''DROP TABLE IF EXISTS userData''')
+
 cursor.execute('''CREATE TABLE IF NOT EXISTS userData 
     (Name VARCHAR NOT NULL,
     Id INTEGER CONSTRAINT IdConstraint PRIMARY KEY,
