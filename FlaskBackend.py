@@ -1,9 +1,11 @@
 import sqlite3
 from flask import Flask, g
+from flask_cors import CORS
 
 DATABASE = 'myData.db'
 
 app = Flask(__name__)
+CORS(app)
 
 
 def get_db():
