@@ -19,26 +19,30 @@ const style = {
   
   export default function BasicModal(props) {
     // sets name field as current name
-    const [name, setName] = React.useState(props.thisEntry.Name);
+    const [name, setName] = React.useState(props.thisEntry?.Name || "");
     const handleChangeName = (event) => {
         setName(event.target.value);
     };
     // sets ID field as current ID
-    const [ID, setID] = React.useState(props.thisEntry.Id);
+    const [ID, setID] = React.useState(props.thisEntry?.Id || "");
     const handleChangeID = (event) => {
         setID(event.target.value);
     };
     // sets Points field as current Points
-    const [Points, setPoints] = React.useState(props.thisEntry.Points);
+    const [Points, setPoints] = React.useState(props.thisEntry?.Points || "");
     const handleChangePoints = (event) => {
         setPoints(event.target.value);
     };
-    // Allows fields to be updated at the start(to be populated with default values)
+    // Allows fields to be updated at the start (to be populated with default values)
     React.useEffect(() => {
         if (props.thisEntry) {
           setName(props.thisEntry.Name);
           setID(props.thisEntry.Id);
           setPoints(props.thisEntry.Points);
+        } else {
+          setName("");
+          setID("");
+          setPoints("");
         }
       }, [props.thisEntry])
     
@@ -74,7 +78,11 @@ const style = {
                 onChange={handleChangePoints}
                 />
             <Button variant="text" onClick={() => {props.close()
-                props.update(name, ID, Points)
+                if (!props.editID) {
+                  props.update(name, ID, Points)
+                } else {
+                  props.create(name, ID, Points)
+                }
 
                 }}>
             Submit</Button>

@@ -49,21 +49,34 @@ def deleteUser(userID):
         dataConnect.rollback()
         return {"Error": e}
 
+# updates user information at ID location in the database
 def updateUser(userID, data):
     dataConnect = get_db()
     dataCursor = dataConnect.cursor()
-    print("Grep PRIME")
-    query = f"""UPDATE userData SET 
-                                Name = "{data['Name']}", 
-                                    Points = {str(data['Points'])} 
-                                WHERE Id=?"""
+    query = f"""UPDATE userData 
+                SET 
+                    Name = "{data['Name']}", 
+                    Points = {str(data['Points'])} 
+                WHERE Id=?"""
     dataCursor.execute(query, (userID,))
     dataConnect.commit()
     x = ""
     dataCursor.execute("SELECT * FROM userData WHERE ID=?", (userID,))
     for row in dataCursor.fetchall():
         x = dict(row)
-        print(x)
+    return x
+
+# creates new user entry in the database
+def createUser(userID, data):
+    dataConnect = get_db()
+    dataCursor = dataConnect.cursor()
+    query = f"INSERT INTO userData VALUES ('{data['Name']}', {data['Id']}, {data['Points']})"
+    dataCursor.execute(query)
+    dataConnect.commit()
+    x = ""
+    dataCursor.execute("SELECT * FROM userData WHERE ID=?", (userID,))
+    for row in dataCursor.fetchall():
+        x = dict(row)
     return x
 
 # Flask Start
@@ -79,5 +92,10 @@ def callDeleteUser(userID):
 @app.route("/users/<userID>", methods=["PUT"])
 def callUpdateUser(userID):
     data = request.get_json()
-    print(request.get_json(), userID)
     return updateUser(userID, data)
+
+@app.route("/users/<userID>", methods=["POST"])
+def callCreateeUser(userID):
+    data = request.get_json()
+    print(request.get_json(), userID)
+    return createUser(userID, data)

@@ -23,5 +23,14 @@ function updateUser(userObject) {
         ).catch(Error => console.log("update fetch failed"));
 }
 
-export {getUsers, deleteUser, updateUser}
+function createUser(userObject) {
+    return fetch(`http://localhost:5000/users/${userObject.Id}`,{
+        method: "POST",
+        body: JSON.stringify(userObject),
+        headers: {"Content-Type": "application/json"}}
+        ).then(response => response.json()
+        ).catch(Error => console.log("create fetch failed"));
+}
+
+export {getUsers, deleteUser, updateUser, createUser}
 
