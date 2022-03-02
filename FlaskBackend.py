@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, g
+from flask import Flask, g, request
 from flask_cors import CORS
 
 DATABASE = 'myData.db'
@@ -49,10 +49,22 @@ def deleteUser(userID):
         dataConnect.rollback()
         return {"Error": e}
 
-
-    
-
-
+def updateUser(userID, data):
+    dataConnect = get_db()
+    dataCursor = dataConnect.cursor()
+    print("Grep PRIME")
+    query = f"""UPDATE userData SET 
+                                Name = "{data['Name']}", 
+                                    Points = {str(data['Points'])} 
+                                WHERE Id=?"""
+    dataCursor.execute(query, (userID,))
+    dataConnect.commit()
+    x = ""
+    dataCursor.execute("SELECT * FROM userData WHERE ID=?", (userID,))
+    for row in dataCursor.fetchall():
+        x = dict(row)
+        print(x)
+    return x
 
 # Flask Start
 
@@ -63,3 +75,9 @@ def getAllUsers():
 @app.route("/users/<userID>", methods=["DELETE"])
 def callDeleteUser(userID):
     return deleteUser(userID)
+
+@app.route("/users/<userID>", methods=["PUT"])
+def callUpdateUser(userID):
+    data = request.get_json()
+    print(request.get_json(), userID)
+    return updateUser(userID, data)

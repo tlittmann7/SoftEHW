@@ -7,27 +7,57 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {getUsers, deleteUser} from '../services/backendservice.js';
+import {getUsers, deleteUser, updateUser} from '../services/backendservice.js';
 // import deleteUser from '../services/backendservice.js';
 import Button from '@mui/material/Button';
+import BasicModal from './Modal.js';
 
 export default class DataTable extends React.Component {
 
     constructor() {
         super();
-        this.state = {rows: []};
+        this.state = {rows: [], open: false, thisEntry: {}};
+        this.handleClose = this.handleClose.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
+
     }
 
     componentDidMount () {
-        getUsers().then(currentTable => {console.log(currentTable); 
-        this.setState({rows: currentTable.users})
-        console.log(currentTable)});
+        getUsers().then(currentTable => { 
+        this.setState({rows: currentTable.users})});
+    }
+
+    handleClose () {
+        this.setState({open: false});
+
+    }
+
+    handleUpdate (name, id, points) {
+        let updateInfo = {Name: name, Id: id, Points: points}; 
+        updateUser(updateInfo).then(response => 
+            this.setState(prevState => 
+                prevState.rows.map(row => 
+                    {
+                        if (row.Id == response.Id) {
+                            row.Name = response.Name
+                            row.Points = response.Points
+                        } 
+                        return row
+                    }) 
+                    ));
     }
 
     // Formats and displays table of contents
     render() {
         return (
         <TableContainer component={Paper}>
+            <BasicModal open={this.state.open}
+                close={this.handleClose}
+                editID={this.state.editID}
+                thisEntry={this.state.thisEntry}
+                update={this.handleUpdate}
+                >
+            </BasicModal>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
                 <TableRow>
@@ -41,8 +71,7 @@ export default class DataTable extends React.Component {
                 {this.state.rows.map((row) => (
                 <TableRow
                     key={row.Id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell component="th" scope="row">
                     {row.Name}
                     </TableCell>
@@ -50,12 +79,16 @@ export default class DataTable extends React.Component {
                     <TableCell align="right">{row.Points}</TableCell>
                     <TableCell align="right">
                         <Button variant="text" 
+                        onClick={() => {this.setState({open: true, editID: false, thisEntry: row})}}>Edit
+                        </Button></TableCell>
+                    <TableCell align="right">
+                        {/* Button to delete the user on the same row as the button */}
+                        <Button variant="text" 
                         onClick={() => { deleteUser(row.Id).then(response => {
                             this.setState(prevState => {
-                                let prevIDs = prevState.rows.filter(entry => 
+                                let newUsers = prevState.rows.filter(entry => 
                                     entry.Id != response.deletedID);
-                                console.log(prevIDs);
-                                return {'rows': prevIDs}});
+                                return {'rows': newUsers}});
                         }) }}>
                             Delete
                             </Button>
