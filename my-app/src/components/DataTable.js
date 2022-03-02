@@ -55,8 +55,7 @@ export default class DataTable extends React.Component {
     handleCreate (name, id, points) {
         let createInfo = {Name: name, Id: id, Points: points};
         createUser(createInfo).then(response => 
-            this.setState(prevState => { console.log(response)
-                console.log(prevState)
+            this.setState(prevState => {
                 return {
                     ...prevState,
                     rows: [
