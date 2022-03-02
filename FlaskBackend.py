@@ -97,5 +97,4 @@ def callUpdateUser(userID):
 @app.route("/users/<userID>", methods=["POST"])
 def callCreateeUser(userID):
     data = request.get_json()
-    print(request.get_json(), userID)
     return createUser(userID, data)
