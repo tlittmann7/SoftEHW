@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, g, request
 from flask_cors import CORS
+from flask import Response
 
 DATABASE = 'myData.db'
 
@@ -46,8 +47,9 @@ def deleteUser(userID):
         dataConnect.commit()
         return {"deletedID": userID}
     except Exception as e:
+        # An exception seems to be thrown elsewhere, but this helps so that the database does not crash
         dataConnect.rollback()
-        return {"Error": e}
+        return Response({"Error": e}, status=400)
 
 # updates user information at ID location in the database
 def updateUser(userID, data):
@@ -68,16 +70,20 @@ def updateUser(userID, data):
 
 # creates new user entry in the database
 def createUser(userID, data):
-    dataConnect = get_db()
-    dataCursor = dataConnect.cursor()
-    query = f"INSERT INTO userData VALUES ('{data['Name']}', {data['Id']}, {data['Points']})"
-    dataCursor.execute(query)
-    dataConnect.commit()
-    x = ""
-    dataCursor.execute("SELECT * FROM userData WHERE ID=?", (userID,))
-    for row in dataCursor.fetchall():
-        x = dict(row)
-    return x
+    try:
+        dataConnect = get_db()
+        dataCursor = dataConnect.cursor()
+        query = f"INSERT INTO userData VALUES ('{data['Name']}', {data['Id']}, {data['Points']})"
+        dataCursor.execute(query)
+        dataConnect.commit()
+        x = ""
+        dataCursor.execute("SELECT * FROM userData WHERE ID=?", (userID,))
+        for row in dataCursor.fetchall():
+            x = dict(row)
+        return x
+    except Exception as e:
+        dataConnect.rollback()
+        return {"Error": e}
 
 # Flask Start
 

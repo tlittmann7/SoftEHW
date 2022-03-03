@@ -28,8 +28,7 @@ function createUser(userObject) {
         method: "POST",
         body: JSON.stringify(userObject),
         headers: {"Content-Type": "application/json"}}
-        ).then(response => response.json()
-        ).catch(Error => console.log("create fetch failed"));
+        )
 }
 
 export {getUsers, deleteUser, updateUser, createUser}

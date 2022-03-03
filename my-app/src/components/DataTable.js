@@ -54,16 +54,19 @@ export default class DataTable extends React.Component {
     // handles sending a create request and updating the table with the response
     handleCreate (name, id, points) {
         let createInfo = {Name: name, Id: id, Points: points};
-        createUser(createInfo).then(response => 
-            this.setState(prevState => {
-                return {
-                    ...prevState,
-                    rows: [
-                        ...prevState.rows,
-                        response
-                    ]
-                }
-            }))
+        createUser(createInfo).then(response => {
+            if (response.status == 200) {
+                this.setState(prevState => {
+                    return {
+                        ...prevState,
+                        rows: [
+                            ...prevState.rows,
+                            response.json()
+                        ]
+                    }
+                })
+            }
+        })
     }
 
 
