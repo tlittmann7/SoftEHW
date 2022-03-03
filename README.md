@@ -1,5 +1,5 @@
 # SoftEHW
-Homework for Software Engineering
+Homework for Software Engineering [Tested using `Python 3.10.2`]
 
 Please begin by setting up a virtual environment (Virtualenv) for python.  
 
