@@ -126,8 +126,11 @@ export default class DataTable extends React.Component {
             </TableBody>
             </Table>
         </TableContainer>
-        <Typography id="Edit_Warning" variant="h6" component="h2">
-              *You cannot edit your ID.  If you Wish to do so, delete your entry and recreate it
+        <Typography id="Edit_Warning1" variant="h6" component="h2">
+              *You cannot edit your ID.  If you Wish to do so, delete your entry and recreate it.
+        </Typography>
+        <Typography id="Edit_Warning2" variant="h6" component="h2">
+              In addition, all IDs must be unique.
         </Typography>
             {/* button opens a modal to create a new user */}
             <Button variant="outlined"
